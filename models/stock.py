@@ -50,12 +50,12 @@ class StockMove(models.Model):
                                      readonly=True,
                                      store=False)
 
-    @api.one
+    # @api.one
     def _compute_mrp_date(self):
         for move in self.mapped('raw_material_production_id'):
             move.move_raw_ids.update({'mrp_date': move.date_planned_start})
 
-    @api.multi
+    # @api.multi
     def _search_date_planned(self, operator, value):
         model_mrp_production = self.env['mrp.production']
         moves = model_mrp_production.search(
@@ -63,19 +63,23 @@ class StockMove(models.Model):
         list_ids = moves.mapped('move_raw_ids.id')
         return [('id', 'in', list_ids)]
 
-    @api.one
+    # @api.one
     def _compute_lote(self):
         for moves in self.filtered('move_line_ids.lot_id'):
             lots = ""
             for move in moves.mapped('move_line_ids').filtered('product_qty'):
-                lots += '%s  %s,' % (move.lot_id.name or '', move.product_qty)
+                lots += '%s %s,' % (move.location_id.name or '', move.product_qty)
+                #lots += '%s  %s,' % (move.lot_id.name or '', move.product_qty)
             moves.lotes = lots
 
-    @api.one
+    # @api.one
     def _compute_type(self):
+        move_ids = []
+        for move in self:
+            move_ids.append(move.id)
         MrpProduction = self.env['mrp.production']
         productions = MrpProduction.search([
-            ('move_raw_ids.id', 'in', [self.id])])
+            ('move_raw_ids', 'in', move_ids)])
         if productions:
             if productions[0].sale_id:
                 self.sale_order_type_id = productions[0].sale_id.type_id.name

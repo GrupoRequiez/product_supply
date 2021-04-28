@@ -13,9 +13,9 @@
         <div class="row text-right" style="padding-right: 35px;">
           <strong>Date of Generation:</strong>
           <p t-raw="datetime.datetime.today().strftime('%d-%m-%Y %H:%M:%S')"/>
-          <strong>Origin Location:</strong>
+          <strong>Origin Location: </strong>
           <span t-esc="data['origin']"/>
-          <strong>Destiny Location:</strong>
+          <strong> Destiny Location: </strong>
           <span t-esc="data['dest']"/>
         </div>
         <br/><br/>
