@@ -55,6 +55,7 @@ class ProductSupply(models.TransientModel):
                                     lambda a: a.product_id.id ==
                                     line.product_id.id and not line.lot_id)]),
                         'move': line.id,
+                        'locations': [(l.location_id.name, l.product_qty) for m in moves.mapped('move_line_ids') for l in m.filtered(lambda a: a.product_id.id == line.product_id.id and a.lot_id.id == line.lot_id.id)]
                     }})
         extra_data = dict()
         extra_data['ids'] = [value.id for value in moves]
