@@ -65,11 +65,12 @@ class StockMove(models.Model):
 
     # @api.one
     def _compute_lote(self):
-        for moves in self.filtered('move_line_ids.lot_id'):
+        for moves in self.search([('state', '=', 'assigned')]):
             lots = ""
-            for move in moves.mapped('move_line_ids').filtered('product_qty'):
-                lots += '%s %s,' % (move.location_id.name or '', move.product_qty)
-                #lots += '%s  %s,' % (move.lot_id.name or '', move.product_qty)
+            if moves.product_id.tracking == 'lot':
+                for line in moves.move_line_ids:
+                    if line.lot_id:
+                        lots += '%s %s,' % (line.location_id.name, line.product_qty)
             moves.lotes = lots
 
     # @api.one

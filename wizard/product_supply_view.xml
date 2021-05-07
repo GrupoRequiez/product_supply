@@ -24,7 +24,7 @@
       <field name="view_id" ref="product_supply.product_supply_view"/>
       <field name="target">new</field>
       <field name="binding_model_id" ref="model_stock_move"/>
-      <field name="binding_view_types">form</field>
+      <field name="binding_view_types">list</field>
   </record>
  </data>
 </odoo>
