@@ -75,12 +75,8 @@ class StockMove(models.Model):
 
     # @api.one
     def _compute_type(self):
-        move_ids = []
         for move in self:
-            move_ids.append(move.id)
-        MrpProduction = self.env['mrp.production']
-        productions = MrpProduction.search([
-            ('move_raw_ids', 'in', move_ids)])
-        if productions:
-            if productions[0].sale_id:
-                self.sale_order_type_id = productions[0].sale_id.type_id.name
+            production = self.env['mrp.production'].search(
+                ['|', ('name', '=', move.reference), ('name', '=', move.origin)], limit=1)
+            if production and production.sale_id:
+                move.sale_order_type_id = production.sale_id.type_id.name
